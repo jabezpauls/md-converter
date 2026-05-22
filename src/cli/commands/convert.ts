@@ -1,7 +1,6 @@
 import { existsSync } from 'fs';
 import { resolve, basename, extname, dirname, join } from 'path';
 import chalk from 'chalk';
-import ora from 'ora';
 import { converter } from '../../core/converter.js';
 import { FORMAT_INFO, type OutputFormat } from '../../types/index.js';
 import { pdfTransformer } from '../../core/transformers/index.js';
@@ -57,6 +56,8 @@ export async function convertCommand(
 
   console.log(`Converting to ${formatInfo.name}...`);
 
+  let exitCode = 0;
+
   try {
     await converter.convertFile(resolvedInput, outputPath, {
       format,
@@ -65,8 +66,8 @@ export async function convertCommand(
     });
 
     console.log(chalk.green(`✔ Successfully converted to ${outputPath}`));
-    process.exit(0);
   } catch (error) {
+    exitCode = 1;
     console.log(chalk.red('✖ Conversion failed'));
 
     if (error instanceof Error) {
@@ -75,7 +76,11 @@ export async function convertCommand(
         console.error(chalk.gray(error.stack));
       }
     }
-
-    process.exit(1);
+  } finally {
+    if (format === 'pdf') {
+      await pdfTransformer.dispose();
+    }
   }
+
+  process.exit(exitCode);
 }

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    :root {
+      --text-color: #1a1a1a;
+      --heading-color: #E67E22;
+      --link-color: #0066cc;
+      --code-bg: #f5f5f5;
+      --border-color: #ddd;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-color);
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: #fff;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--heading-color);
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    h1 {
+      font-size: 2em;
+      border-bottom: 2px solid var(--heading-color);
+      padding-bottom: 0.3em;
+    }
+
+    h2 {
+      font-size: 1.75em;
+    }
+
+    h3 {
+      font-size: 1.5em;
+    }
+
+    h4 {
+      font-size: 1.25em;
+    }
+
+    p {
+      margin: 1em 0;
+    }
+
+    a {
+      color: var(--link-color);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    code {
+      font-family: 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 0.9em;
+      background: var(--code-bg);
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+    }
+
+    pre {
+      background: var(--code-bg);
+      padding: 1em;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 1em 0;
+    }
+
+    pre code {
+      background: none;
+      padding: 0;
+      font-size: 0.875em;
+      line-height: 1.5;
+    }
+
+    blockquote {
+      margin: 1em 0;
+      padding: 0.5em 1em;
+      border-left: 4px solid var(--heading-color);
+      background: #f9f9f9;
+    }
+
+    blockquote p {
+      margin: 0.5em 0;
+    }
+
+    ul, ol {
+      margin: 1em 0;
+      padding-left: 2em;
+    }
+
+    li {
+      margin: 0.25em 0;
+    }
+
+    li > ul, li > ol {
+      margin: 0.25em 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1em 0;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 0.75em;
+      text-align: left;
+    }
+
+    th {
+      background: var(--code-bg);
+      font-weight: 600;
+    }
+
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    hr {
+      border: none;
+      border-top: 2px solid var(--border-color);
+      margin: 2em 0;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .task-list-item {
+      list-style: none;
+      margin-left: -1.5em;
+    }
+
+    .task-list-item input[type="checkbox"] {
+      margin-right: 0.5em;
+    }
+
+    del {
+      color: #999;
+    }
+
+    @media print {
+      body {
+        max-width: none;
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+<h1>Table Alignment Test</h1>
+<h2>1. Basic Alignment</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Left Aligned</th>
+<th align="center">Center Aligned</th>
+<th align="right">Right Aligned</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Apple</td>
+<td align="center">Banana</td>
+<td align="right">Cherry</td>
+<td>Date</td>
+</tr>
+<tr>
+<td align="left">1</td>
+<td align="center">2</td>
+<td align="right">3</td>
+<td>4</td>
+</tr>
+<tr>
+<td align="left">Short</td>
+<td align="center">A bit longer</td>
+<td align="right">The longest cell here</td>
+<td>X</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>2. Pricing Table</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Product</th>
+<th align="center">Category</th>
+<th align="right">Price</th>
+<th align="center">Discount</th>
+<th align="right">Final Price</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">MacBook Pro 14"</td>
+<td align="center">Laptop</td>
+<td align="right">$1999.00</td>
+<td align="center">10%</td>
+<td align="right">$1,799.10</td>
+</tr>
+<tr>
+<td align="left">iPhone 15 Pro</td>
+<td align="center">Phone</td>
+<td align="right">$999.00</td>
+<td align="center">5%</td>
+<td align="right">$949.05</td>
+</tr>
+<tr>
+<td align="left">AirPods Pro</td>
+<td align="center">Audio</td>
+<td align="right">$249.00</td>
+<td align="center">15%</td>
+<td align="right">$211.65</td>
+</tr>
+<tr>
+<td align="left">Apple Watch S9</td>
+<td align="center">Wearable</td>
+<td align="right">$399.00</td>
+<td align="center">0%</td>
+<td align="right">$399.00</td>
+</tr>
+<tr>
+<td align="left">iPad Air</td>
+<td align="center">Tablet</td>
+<td align="right">$599.00</td>
+<td align="center">8%</td>
+<td align="right">$551.08</td>
+</tr>
+<tr>
+<td align="left"><strong>Total</strong></td>
+<td align="center"></td>
+<td align="right"></td>
+<td align="center"></td>
+<td align="right"><strong>$3,909.88</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>3. Developer Benchmark</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Language</th>
+<th align="center">Paradigm</th>
+<th align="right">Speed Score</th>
+<th align="center">Memory Use</th>
+<th align="right">Popularity Rank</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Rust</td>
+<td align="center">System</td>
+<td align="right">98</td>
+<td align="center">Low</td>
+<td align="right">15</td>
+</tr>
+<tr>
+<td align="left">C++</td>
+<td align="center">Multi</td>
+<td align="right">97</td>
+<td align="center">High</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td align="left">Go</td>
+<td align="center">Concurrent</td>
+<td align="right">88</td>
+<td align="center">Low</td>
+<td align="right">11</td>
+</tr>
+<tr>
+<td align="left">Java</td>
+<td align="center">OOP</td>
+<td align="right">75</td>
+<td align="center">High</td>
+<td align="right">3</td>
+</tr>
+<tr>
+<td align="left">Python</td>
+<td align="center">Multi</td>
+<td align="right">45</td>
+<td align="center">Medium</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="left">JavaScript</td>
+<td align="center">Event-driven</td>
+<td align="right">60</td>
+<td align="center">Medium</td>
+<td align="right">2</td>
+</tr>
+<tr>
+<td align="left">TypeScript</td>
+<td align="center">Multi</td>
+<td align="right">61</td>
+<td align="center">Medium</td>
+<td align="right">5</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>4. Mixed Content in Cells</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Feature</th>
+<th align="center">Status</th>
+<th align="left">Notes</th>
+<th align="right">Priority</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Table alignment</td>
+<td align="center">✅ Done</td>
+<td align="left">Fixed in latest patch</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td align="left">Image in DOCX</td>
+<td align="center">🔄 WIP</td>
+<td align="left">Needs buffer fetch logic</td>
+<td align="right">2</td>
+</tr>
+<tr>
+<td align="left">Frontmatter parse</td>
+<td align="center">❌ Todo</td>
+<td align="left">YAML support planned</td>
+<td align="right">3</td>
+</tr>
+<tr>
+<td align="left">Batch convert</td>
+<td align="center">❌ Todo</td>
+<td align="left">Glob pattern support</td>
+<td align="right">4</td>
+</tr>
+<tr>
+<td align="left">Watch mode</td>
+<td align="center">❌ Todo</td>
+<td align="left">Uses <code>fs.watch</code> or <code>chokidar</code></td>
+<td align="right">5</td>
+</tr>
+<tr>
+<td align="left">Stdin support</td>
+<td align="center">❌ Todo</td>
+<td align="left">Standard pipe pattern</td>
+<td align="right">6</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>5. Schedule Table</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Time</th>
+<th align="center">Monday</th>
+<th align="center">Tuesday</th>
+<th align="center">Wednesday</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">09:00 AM</td>
+<td align="center">Team standup</td>
+<td align="center">Design review</td>
+<td align="center">Team standup</td>
+</tr>
+<tr>
+<td align="left">11:00 AM</td>
+<td align="center">Code review</td>
+<td align="center">Sprint plan</td>
+<td align="center">Code review</td>
+</tr>
+<tr>
+<td align="left">01:00 PM</td>
+<td align="center">Lunch</td>
+<td align="center">Lunch</td>
+<td align="center">Lunch</td>
+</tr>
+<tr>
+<td align="left">03:00 PM</td>
+<td align="center">Feature Dev</td>
+<td align="center">Feature Dev</td>
+<td align="center">QA Testing</td>
+</tr>
+<tr>
+<td align="left">05:00 PM</td>
+<td align="center">Daily wrap-up</td>
+<td align="center">Daily wrap-up</td>
+<td align="center">Daily wrap-up</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>6. Numbers &#x26; Stats (Right-Aligned)</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Metric</th>
+<th align="right">Q1 2024</th>
+<th align="right">Q2 2024</th>
+<th align="right">Q3 2024</th>
+<th align="right">Q4 2024</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Revenue ($K)</td>
+<td align="right">1,240</td>
+<td align="right">1,580</td>
+<td align="right">1,920</td>
+<td align="right">2,310</td>
+</tr>
+<tr>
+<td align="left">Users</td>
+<td align="right">12,400</td>
+<td align="right">18,750</td>
+<td align="right">24,100</td>
+<td align="right">31,500</td>
+</tr>
+<tr>
+<td align="left">Conversion Rate</td>
+<td align="right">3.20%</td>
+<td align="right">3.85%</td>
+<td align="right">4.10%</td>
+<td align="right">4.75%</td>
+</tr>
+<tr>
+<td align="left">Avg Session (mins)</td>
+<td align="right">4.50</td>
+<td align="right">5.20</td>
+<td align="right">5.80</td>
+<td align="right">6.40</td>
+</tr>
+<tr>
+<td align="left">Support Tickets</td>
+<td align="right">320</td>
+<td align="right">280</td>
+<td align="right">230</td>
+<td align="right">190</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

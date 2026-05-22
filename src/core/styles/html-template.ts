@@ -174,6 +174,6 @@ export const defaultHtmlTemplate = `<!DOCTYPE html>
 
 export function wrapInTemplate(content: string, title = 'Document'): string {
   return defaultHtmlTemplate
-    .replace('{{title}}', title)
-    .replace('{{content}}', content);
+    .replaceAll('{{title}}', title)
+    .replaceAll('{{content}}', content);
 }

@@ -329,14 +329,19 @@ export class DOCXTransformer implements Transformer {
       const row = node.children[i] as MdastTableRow;
       const isHeader = i === 0;
 
-      const cells = (row.children as MdastTableCell[]).map((cell) => {
+      const cells = (row.children as MdastTableCell[]).map((cell, colIndex) => {
         const runs = this.processInlineContent(cell.children as PhrasingContent[]);
+        const colAlign = node.align?.[colIndex];
+        const alignmentType =
+          colAlign === 'center' ? AlignmentType.CENTER :
+          colAlign === 'right'  ? AlignmentType.RIGHT  :
+          AlignmentType.LEFT;
 
         return new TableCell({
           children: [
             new Paragraph({
               children: runs,
-              alignment: AlignmentType.LEFT,
+              alignment: alignmentType,
             }),
           ],
           shading: isHeader ? { fill: 'E8E8E8' } : undefined,

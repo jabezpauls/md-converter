@@ -63,15 +63,6 @@ export class TXTTransformer implements Transformer {
           .join('\n');
       }
 
-      case 'listItem': {
-        const checkbox =
-          node.checked === true ? '[x] ' : node.checked === false ? '[ ] ' : '';
-        const content = node.children
-          .map((child) => this.processNode(child, depth + 1))
-          .join('\n');
-        return checkbox + content;
-      }
-
       case 'table':
         return this.formatTable(node.children as TableRow[]);
 

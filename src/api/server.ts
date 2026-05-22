@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import { convertRoutes } from './routes/convert.js';
 import { healthRoutes } from './routes/health.js';
+import { pdfTransformer } from '../core/transformers/index.js';
 
 export interface ServerOptions {
   port?: number;
@@ -26,6 +27,10 @@ export async function createServer(options: ServerOptions = {}) {
   // Register routes
   await fastify.register(healthRoutes, { prefix: '/api/v1' });
   await fastify.register(convertRoutes, { prefix: '/api/v1' });
+
+  fastify.addHook('onClose', async () => {
+    await pdfTransformer.dispose();
+  });
 
   // Root endpoint
   fastify.get('/', async () => {
