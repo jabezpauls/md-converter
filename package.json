@@ -1,6 +1,6 @@
 {
   "name": "@jabezpauls/md-converter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert Markdown to DOCX, PDF, TXT, or HTML",
   "type": "module",
   "main": "./dist/index.js",
