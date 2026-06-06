@@ -13,7 +13,8 @@ interface ConvertCommandOptions {
   verbose?: boolean;
 }
 
-const validFormats = ['docx', 'pdf', 'txt', 'html'] as const;
+const validFormats = ['docx', 'pdf', 'txt', 'html', 'md'] as const;
+const validSourceExtensions = ['.pdf', '.docx'];
 
 function isValidFormat(format: string): format is OutputFormat {
   return validFormats.includes(format as OutputFormat);
@@ -39,6 +40,16 @@ export async function convertCommand(
   // Check if input file exists
   if (!existsSync(resolvedInput)) {
     console.error(chalk.red(`Error: Input file not found: ${resolvedInput}`));
+    process.exit(1);
+  }
+
+  // Reverse conversion (-> Markdown) requires a supported binary source
+  if (format === 'md' && !validSourceExtensions.includes(extname(resolvedInput).toLowerCase())) {
+    console.error(
+      chalk.red(
+        `Error: Cannot convert "${extname(resolvedInput)}" to Markdown. Supported source formats: ${validSourceExtensions.join(', ')}`
+      )
+    );
     process.exit(1);
   }
 

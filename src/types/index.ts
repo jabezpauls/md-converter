@@ -1,6 +1,8 @@
 import type { Root } from 'mdast';
 
-export type OutputFormat = 'docx' | 'pdf' | 'txt' | 'html';
+export type OutputFormat = 'docx' | 'pdf' | 'txt' | 'html' | 'md';
+
+export type SourceFormat = 'docx' | 'pdf';
 
 export interface ConvertOptions {
   format: OutputFormat;
@@ -25,6 +27,10 @@ export interface TransformerOptions {
 
 export interface Transformer {
   transform(mdast: Root, options?: TransformerOptions): Promise<Buffer>;
+}
+
+export interface Ingester {
+  ingest(input: Buffer): Promise<string>;
 }
 
 export interface FormatInfo {
@@ -58,5 +64,11 @@ export const FORMAT_INFO: Record<OutputFormat, FormatInfo> = {
     name: 'Plain Text',
     extension: '.txt',
     mimeType: 'text/plain',
+  },
+  md: {
+    id: 'md',
+    name: 'Markdown',
+    extension: '.md',
+    mimeType: 'text/markdown',
   },
 };

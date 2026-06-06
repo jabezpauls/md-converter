@@ -2,9 +2,13 @@ import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { converter } from '../../core/converter.js';
 import { FORMAT_INFO, type OutputFormat } from '../../types/index.js';
 
+// The JSON API converts Markdown text -> X only; 'md' output needs a binary input
+// and so is not offered here.
+type ForwardFormat = Exclude<OutputFormat, 'md'>;
+
 interface ConvertJsonBody {
   markdown: string;
-  format: OutputFormat;
+  format: ForwardFormat;
   options?: {
     syntaxHighlight?: boolean;
     pageSize?: 'A4' | 'Letter';
@@ -13,8 +17,8 @@ interface ConvertJsonBody {
 
 const validFormats = ['docx', 'pdf', 'txt', 'html'] as const;
 
-function isValidFormat(format: string): format is OutputFormat {
-  return validFormats.includes(format as OutputFormat);
+function isValidFormat(format: string): format is ForwardFormat {
+  return validFormats.includes(format as ForwardFormat);
 }
 
 export async function convertRoutes(fastify: FastifyInstance): Promise<void> {

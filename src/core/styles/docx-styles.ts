@@ -1,7 +1,6 @@
 import {
   HeadingLevel,
   convertInchesToTwip,
-  AlignmentType,
   UnderlineType,
 } from 'docx';
 

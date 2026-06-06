@@ -1,7 +1,14 @@
 import { readFile, writeFile } from 'fs/promises';
+import { extname } from 'path';
 import { MarkdownParser } from './parser/index.js';
 import { getTransformer } from './transformers/index.js';
-import type { ConvertOptions, OutputFormat } from '../types/index.js';
+import { getIngester } from './ingesters/index.js';
+import type { ConvertOptions, OutputFormat, SourceFormat } from '../types/index.js';
+
+const SOURCE_EXTENSIONS: Record<string, SourceFormat> = {
+  '.docx': 'docx',
+  '.pdf': 'pdf',
+};
 
 export class Converter {
   private parser: MarkdownParser;
@@ -27,12 +34,29 @@ export class Converter {
     });
   }
 
+  async convertToMarkdown(input: Buffer, sourceFormat: SourceFormat): Promise<string> {
+    return getIngester(sourceFormat).ingest(input);
+  }
+
   async convertFile(
     inputPath: string,
     outputPath: string,
     options: ConvertOptions
   ): Promise<void> {
     const input = await readFile(inputPath);
+
+    if (options.format === 'md') {
+      const sourceFormat = SOURCE_EXTENSIONS[extname(inputPath).toLowerCase()];
+      if (!sourceFormat) {
+        throw new Error(
+          `Cannot convert to Markdown from "${extname(inputPath)}". Supported source formats: ${Object.keys(SOURCE_EXTENSIONS).join(', ')}`
+        );
+      }
+      const markdown = await this.convertToMarkdown(input, sourceFormat);
+      await writeFile(outputPath, markdown);
+      return;
+    }
+
     const output = await this.convert(input, options);
     await writeFile(outputPath, output);
   }

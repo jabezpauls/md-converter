@@ -1,6 +1,6 @@
 # md-converter
 
-A command-line tool for converting Markdown files to DOCX, PDF, HTML, and plain text. Supports GitHub Flavored Markdown including tables, task lists, and syntax-highlighted code blocks.
+A command-line tool for converting Markdown files to DOCX, PDF, HTML, and plain text — and for converting PDF and DOCX files back to Markdown. Supports GitHub Flavored Markdown including tables, task lists, and syntax-highlighted code blocks.
 
 ## Installation
 
@@ -36,6 +36,18 @@ Specify a custom output path:
 md-converter document.md -f pdf -o reports/output.pdf
 ```
 
+Convert a PDF or Word document back to Markdown:
+
+```bash
+md-converter report.pdf -f md
+md-converter notes.docx -f md -o notes.md
+```
+
+The source format is detected from the input file extension (`.pdf` or `.docx`).
+DOCX conversion preserves headings, lists, tables, and inline formatting. PDF
+extraction is text-based and best-effort — layout-dependent structure such as
+columns and tables may not survive.
+
 See what's happening with verbose output:
 
 ```bash
@@ -45,7 +57,7 @@ md-converter document.md -f docx -v
 ### Available Options
 
 ```
--f, --format <format>     Output format: docx, pdf, html, txt (required)
+-f, --format <format>     Output format: docx, pdf, html, txt, md (required)
 -o, --output <path>       Custom output file path
 --no-syntax-highlight     Disable code syntax highlighting
 --page-size <size>        PDF page size: A4 or Letter (default: A4)
