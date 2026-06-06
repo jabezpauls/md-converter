@@ -2,18 +2,21 @@ name: Publish to NPM
 
 on:
   push:
-    tags:
-      - 'v*.*.*'
+    branches:
+      - main
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,19 +33,42 @@ jobs:
       - name: Build package
         run: npm run build
 
+      - name: Bump version and publish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Get current version
+          CURRENT_VERSION=$(grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\)".*/\1/')
+          echo "Current version: $CURRENT_VERSION"
+
+          # Bump patch version
+          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF=$NF+1;}1' OFS=.)
+          echo "New version: $NEW_VERSION"
+
+          # Update package.json
+          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" package.json
+
+          # Commit and tag
+          git add package.json
+          git commit -m "chore: bump version to $NEW_VERSION" || true
+          git tag "v$NEW_VERSION"
+
+          # Push changes and tag
+          git push origin main --follow-tags || true
+
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
       - name: Publish to NPM
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref_name }}
+          tag: v${{ env.VERSION }}
+          name: Release v${{ env.VERSION }}
           body: |
-            Published to NPM: [@jabezpauls/md-converter@${{ github.ref_name }}](https://www.npmjs.com/package/@jabezpauls/md-converter)
-          draft: false
-          prerelease: false
+            Published to NPM: [@jabezpauls/md-converter@${{ env.VERSION }}](https://www.npmjs.com/package/@jabezpauls/md-converter)
+          token: ${{ secrets.GITHUB_TOKEN }}
