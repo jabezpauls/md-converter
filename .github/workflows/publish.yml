@@ -30,10 +30,7 @@ jobs:
       - name: Run tests
         run: npm run test:run
 
-      - name: Build package
-        run: npm run build
-
-      - name: Bump version and prepare release
+      - name: Bump version
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -43,13 +40,18 @@ jobs:
 
           sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"$NEW\"/" package.json
 
-          git add package.json
-          git commit -m "chore: bump version to $NEW" || true
-          git tag "v$NEW" || true
-          git push origin main || true
-          git push origin "v$NEW" || true
-
           echo "VERSION=$NEW" >> $GITHUB_ENV
+
+      - name: Build package
+        run: npm run build
+
+      - name: Commit and tag
+        run: |
+          git add package.json dist/
+          git commit -m "chore: bump version to ${{ env.VERSION }}" || true
+          git tag "v${{ env.VERSION }}" || true
+          git push origin main || true
+          git push origin "v${{ env.VERSION }}" || true
 
       - name: Publish to NPM
         run: npm publish
