@@ -4,8 +4,7 @@
 # Dependencies
 node_modules/
 
-# Build output
-dist/
+# Build output (dist is committed for NPM publishing)
 
 # Logs
 *.log
