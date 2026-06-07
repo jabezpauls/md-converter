@@ -2,8 +2,8 @@ name: Publish to NPM
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*.*.*'
 
 jobs:
   publish:
@@ -33,32 +33,10 @@ jobs:
       - name: Build package
         run: npm run build
 
-      - name: Bump version and publish
+      - name: Extract version from tag
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # Get current version
-          CURRENT_VERSION=$(grep '"version"' package.json | head -1 | sed 's/.*"version": "\([^"]*\)".*/\1/')
-          echo "Current version: $CURRENT_VERSION"
-
-          # Bump patch version
-          NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF=$NF+1;}1' OFS=.)
-          echo "New version: $NEW_VERSION"
-
-          # Update package.json
-          sed -i "s/\"version\": \"[^\"]*\"/\"version\": \"$NEW_VERSION\"/" package.json
-
-          # Commit and tag
-          git add package.json
-          git commit -m "chore: bump version to $NEW_VERSION"
-          git tag "v$NEW_VERSION"
-
-          # Push changes and tag
-          git push origin main
-          git push origin "v$NEW_VERSION"
-
-          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Publish to NPM
         run: npm publish
