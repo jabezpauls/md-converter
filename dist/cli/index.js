@@ -1256,12 +1256,11 @@ function joinWrappedLines(parts) {
   }
   return out.replace(/\s+/g, " ").trim();
 }
-function headingLevel(fontSize, bodySize, ranks) {
+function headingLevel(fontSize, bodySize) {
   if (fontSize < bodySize * HEADING_SIZE_RATIO) return 0;
-  const unique = [...new Set(ranks.filter((s) => s >= bodySize * HEADING_SIZE_RATIO))].sort((a, b) => b - a);
-  const idx = unique.findIndex((s) => Math.abs(s - fontSize) < 0.15);
-  if (idx < 0) return 2;
-  return Math.min(idx + 1, 3);
+  if (fontSize >= bodySize * 1.8) return 1;
+  if (fontSize >= bodySize * 1.4) return 2;
+  return 3;
 }
 function formatHeading(text, level) {
   const cleaned = text.replace(/:$/, "").trim();
@@ -1272,17 +1271,22 @@ function formatKeyValue(text) {
   const m = text.match(KEY_VALUE_RE);
   if (!m) return null;
   const [, key, value] = m;
-  if (key.length > 48 || value.length > 200) return null;
+  if (key.length > 48 || value.length > 500) return null;
   if (key.split(/\s+/).length > 6) return null;
   return `- **${key}:** ${value.trim()}`;
 }
 function linesToMarkdown(lines) {
   if (!lines.length) return "";
   const bodySize = mode(lines.map((l) => l.fontSize));
-  const headingSizes = lines.map((l) => l.fontSize);
   const blocks = [];
   let para = [];
   let pendingTitle = false;
+  let headingBuf = null;
+  const flushHeading = () => {
+    if (!headingBuf) return;
+    blocks.push(formatHeading(joinWrappedLines(headingBuf.parts), headingBuf.level));
+    headingBuf = null;
+  };
   const flushPara = () => {
     if (!para.length) return;
     const text = joinWrappedLines(para.map((l) => l.text));
@@ -1300,39 +1304,69 @@ function linesToMarkdown(lines) {
     }
     blocks.push(text);
   };
+  const shouldBreakBefore = (line, text) => {
+    if (SECTION_LABEL_RE.test(text) && text.length <= 40) return true;
+    if (headingLevel(line.fontSize, bodySize) > 0 && text.length <= 120 && !/[,;]$/.test(text)) {
+      return true;
+    }
+    if (para.length && KEY_VALUE_RE.test(text) && KEY_VALUE_RE.test(para[0].text.trim())) {
+      return true;
+    }
+    return false;
+  };
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const text = line.text.trim();
     if (!text) continue;
     if (/^title:$/i.test(text)) {
+      flushHeading();
       flushPara();
       pendingTitle = true;
       continue;
     }
     if (pendingTitle) {
-      flushPara();
-      blocks.push(formatHeading(text, 1));
-      pendingTitle = false;
-      continue;
+      flushHeading();
+      if (SECTION_LABEL_RE.test(text) && text.length <= 40) {
+        flushPara();
+        pendingTitle = false;
+        blocks.push(formatHeading(text, 2));
+        continue;
+      }
+      const prev2 = para[para.length - 1];
+      if (prev2) {
+        const gap2 = prev2.y - line.y;
+        const refHeight2 = Math.max(prev2.height, line.height, prev2.fontSize, line.fontSize, bodySize);
+        if (gap2 > refHeight2 * PARAGRAPH_GAP_RATIO) {
+          flushPara();
+        } else {
+          para.push(line);
+          continue;
+        }
+      } else {
+        para.push(line);
+        continue;
+      }
     }
     if (SECTION_LABEL_RE.test(text) && text.length <= 40) {
+      flushHeading();
       flushPara();
       blocks.push(formatHeading(text, 2));
       continue;
     }
-    const level = headingLevel(line.fontSize, bodySize, headingSizes);
+    const level = headingLevel(line.fontSize, bodySize);
     if (level > 0 && text.length <= 120 && !/[,;]$/.test(text)) {
       flushPara();
-      blocks.push(formatHeading(text, level));
+      if (headingBuf && headingBuf.level === level && Math.abs(headingBuf.fontSize - line.fontSize) < 0.5) {
+        headingBuf.parts.push(text);
+      } else {
+        flushHeading();
+        headingBuf = { level, parts: [text], fontSize: line.fontSize };
+      }
       continue;
     }
-    if (KEY_VALUE_RE.test(text) && text.length <= 160) {
+    flushHeading();
+    if (shouldBreakBefore(line, text)) {
       flushPara();
-      const kv = formatKeyValue(text);
-      if (kv) {
-        blocks.push(kv);
-        continue;
-      }
     }
     const prev = para[para.length - 1];
     if (!prev) {
@@ -1348,6 +1382,7 @@ function linesToMarkdown(lines) {
       para.push(line);
     }
   }
+  flushHeading();
   flushPara();
   return blocks.join("\n\n").trim();
 }
