@@ -72,6 +72,35 @@ describe('PDFIngester', () => {
     expect(markdown).toContain('First item');
     expect(markdown.endsWith('\n')).toBe(true);
   });
+
+  it('joins wrapped body lines and detects headings from a structured pdf', async () => {
+    // Arrange — exercises paragraph join + font-size heading heuristics end-to-end
+    const structured = `# SecureSnap Overview
+
+## Abstract
+
+With the exponential growth of online commerce, platforms facilitating the purchase and sale of digital assets have become prime targets for cyber threats. SecureSnap addresses this pressing issue.
+
+## Technology
+
+- **Programming Languages:** HTML, CSS, JavaScript, Python
+- **Frameworks:** Django, Bootstrap
+- **Database:** PostgreSQL
+`;
+    const pdf = await converter.convert(structured, { format: 'pdf' });
+
+    // Act
+    const markdown = await pdfIngester.ingest(pdf);
+
+    // Assert
+    expect(markdown).toMatch(/#+\s*SecureSnap Overview/);
+    expect(markdown).toMatch(/#+\s*Abstract/);
+    // Wrapped lines must be joined (no blank line mid-sentence)
+    expect(markdown).toMatch(/purchase and sale of digital assets/);
+    expect(markdown).not.toMatch(/purchase and\n\nsale/);
+    expect(markdown).toContain('Programming Languages');
+    expect(markdown).toContain('PostgreSQL');
+  });
 });
 
 describe('Converter reverse conversion', () => {
