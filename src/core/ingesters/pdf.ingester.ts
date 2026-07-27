@@ -266,6 +266,22 @@ function formatKeyValue(text: string): string | null {
 }
 
 /**
+ * Blocks are separated by a blank line, except consecutive list items, which stay
+ * adjacent so markdown renders them as one tight list rather than a loose one.
+ */
+function joinBlocks(blocks: string[]): string {
+  let out = '';
+  for (let i = 0; i < blocks.length; i++) {
+    if (i > 0) {
+      const bothListItems = blocks[i].startsWith('- ') && blocks[i - 1].startsWith('- ');
+      out += bothListItems ? '\n' : '\n\n';
+    }
+    out += blocks[i];
+  }
+  return out.trim();
+}
+
+/**
  * Convert one page's lines into markdown blocks.
  * Exported for unit tests with synthetic geometry.
  */
@@ -409,7 +425,7 @@ export function linesToMarkdown(lines: ExtractedLine[]): string {
   flushHeading();
   flushPara();
 
-  return blocks.join('\n\n').trim();
+  return joinBlocks(blocks);
 }
 
 /** Convert raw PDF text items for a single page into markdown. */
