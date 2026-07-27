@@ -1274,6 +1274,17 @@ function formatKeyValue(text) {
   if (key.split(/\s+/).length > 6) return null;
   return `- **${key}:** ${value.trim()}`;
 }
+function joinBlocks(blocks) {
+  let out = "";
+  for (let i = 0; i < blocks.length; i++) {
+    if (i > 0) {
+      const bothListItems = blocks[i].startsWith("- ") && blocks[i - 1].startsWith("- ");
+      out += bothListItems ? "\n" : "\n\n";
+    }
+    out += blocks[i];
+  }
+  return out.trim();
+}
 function linesToMarkdown(lines) {
   if (!lines.length) return "";
   const bodySize = mode(lines.map((l) => l.fontSize));
@@ -1383,7 +1394,7 @@ function linesToMarkdown(lines) {
   }
   flushHeading();
   flushPara();
-  return blocks.join("\n\n").trim();
+  return joinBlocks(blocks);
 }
 var PDFIngester = class {
   async ingest(input) {

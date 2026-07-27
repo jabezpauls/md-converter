@@ -432,5 +432,26 @@ describe('end-to-end SecureSnap-like page (issue #3)', () => {
     expect(md).toContain('- **Database:** PostgreSQL');
     expect(md).toContain('## Outcome');
     expect(md).toContain('The SecureSnap project aims to revolutionize security.');
+    // Consecutive list items form one tight list, not blank-line-separated blocks.
+    expect(md).toContain(
+      '- **Programming Languages:** HTML, CSS, JavaScript, Python\n- **Frameworks:** Django, Bootstrap\n- **Database:** PostgreSQL'
+    );
+  });
+
+  it('keeps consecutive key-value rows as a tight list', () => {
+    // Arrange
+    const lines: ExtractedLine[] = [
+      { y: 730, x: 96, text: 'Programming Languages: HTML, CSS', fontSize: 12, height: 12 },
+      { y: 700, x: 96, text: 'Frameworks: Django, Bootstrap', fontSize: 12, height: 12 },
+      { y: 670, x: 96, text: 'Database: PostgreSQL', fontSize: 12, height: 12 },
+    ];
+
+    // Act
+    const md = linesToMarkdown(lines);
+
+    // Assert
+    expect(md).toBe(
+      '- **Programming Languages:** HTML, CSS\n- **Frameworks:** Django, Bootstrap\n- **Database:** PostgreSQL'
+    );
   });
 });
